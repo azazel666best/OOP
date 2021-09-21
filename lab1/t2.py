@@ -1,3 +1,9 @@
 from sys import argv
-dictionary = {'add': '+', 'subtract': '-', 'multiply': '*', 'divide': '/'}
-print(eval(argv[2]+dictionary[argv[1]]+argv[3]))
+import operator
+try:
+    if len(argv) == 4:
+        print(eval('operator.' + argv[1] + '(' + argv[2] + ', ' + argv[3] + ')'))
+    else:
+        print('Error!')
+except Exception:
+    print('Error!')

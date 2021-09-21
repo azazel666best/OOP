@@ -9,10 +9,12 @@ def f(maxWeight, *weights):
     for i in range(maxWeight, 0, -1):
         if weight[i] == 1:
             return i
+    else:
+        return 0
 
 maxWeight = int(input())
 weights = input()
 weights = weights.split(' ')
-weights = [int(x) for x in weights ]
+weights = [int(x) for x in weights]
 
 print(f(maxWeight, *weights))
