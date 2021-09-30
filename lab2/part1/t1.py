@@ -13,24 +13,17 @@ class Rectangle:
 
     @length.setter
     def length(self, length):
-        if isinstance(length, float):
-            if 0.0 < length < 20.0:
-                self.__length = length
-            else:
-                raise ValueError
+        if 0.0 < length < 20.0:
+            self.__length = length
         else:
-            raise TypeError
-
+            raise ValueError
 
     @width.setter
     def width(self, width):
-        if isinstance(width, float):
-            if 0.0 < width < 20.0:
-                self.__width = width
-            else:
-                raise ValueError
+        if 0.0 < width < 20.0:
+            self.__width = width
         else:
-            raise TypeError
+            raise ValueError
 
     def perimeter(self):
         return (self.__length + self.__width) * 2
@@ -41,14 +34,12 @@ class Rectangle:
 
 obj = Rectangle()
 try:
-    obj.length = 20.8
-    obj.width = 9.4
+    obj.length = float(input())
+    obj.width = float(input())
+    print('length:', obj.length, 'width:', obj.width)
+    print('perimeter:', obj.perimeter())
+    print('area:', obj.area())
 except ValueError:
     print('ValueError')
 except TypeError:
     print('TypeError')
-
-
-print('length:', obj.length, 'width:', obj.width)
-print('perimeter:', obj.perimeter())
-print('area:', obj.area())
