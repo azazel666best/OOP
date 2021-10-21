@@ -1,7 +1,7 @@
 class Rectangle:
-    def __init__(self):
-        self.__length = 1
-        self.__width = 1
+    def __init__(self, length=1, width=1):
+        self.__length = length
+        self.__width = width
 
     @property
     def length(self):
@@ -13,23 +13,20 @@ class Rectangle:
 
     @length.setter
     def length(self, length):
-        if isinstance(length, float):
-            if 0.0 < length < 20.0:
-                self.__length = length
-            else:
-                raise ValueError
-        else:
+        if not isinstance(length, float):
             raise TypeError
+        if 0.0 > length > 20.0:
+            raise ValueError
+        self.__length = length
+
 
     @width.setter
     def width(self, width):
-        if isinstance(width, float):
-            if 0.0 < width < 20.0:
-                self.__width = width
-            else:
-                raise ValueError
-        else:
+        if not isinstance(width, float):
             raise TypeError
+        if 0.0 > width > 20.0:
+            raise ValueError
+        self.__width = width
 
     def perimeter(self):
         return (self.__length + self.__width) * 2

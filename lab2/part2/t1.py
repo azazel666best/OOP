@@ -1,18 +1,47 @@
+from multiprocessing.dummy import Value
+from re import match
+
+
 class Product:
     def __init__(self, price, description, dimensions):
-        if (isinstance(price, float) or isinstance(price, int)) and isinstance(description, str):
-            if price > 0:
-                self.__price = round(price, 2)
-            else:
-                raise ValueError
-            self.__description = description
-        else:
+        if not (isinstance(price, (int, float) and isinstance(description, str))):
             raise TypeError
+        if price <= 0:
+            raise ValueError
+
+        self.__price = round(price, 2)
+        self.__description = description
         self.__dimensions = dimensions
 
     @property
     def price(self):
         return self.__price
+
+    @property
+    def description(self):
+        return self.__description
+
+    @property
+    def dimensions(self):
+        return self.__dimensions
+
+    @price.setter
+    def price(self, price):
+        if not isinstance(price, (int, float)):
+            raise TypeError
+        if price <= 0:
+            raise ValueError
+        self.__price = price
+
+    @description.setter
+    def description(self, description):
+        if not isinstance(description, str):
+            raise TypeError
+        self.__description = description
+
+    @dimensions.setter
+    def dimensions(self, dimensions):
+        self.__dimensions = dimensions
 
     def __str__(self):
         return f'Prise: {self.__price}, description: {self.__description}, dimensions: {self.__dimensions};'
@@ -20,14 +49,57 @@ class Product:
 
 class Customer:
     def __init__(self, surname, name, patronymic, mobile_phone):
-        if isinstance(mobile_phone, int) and isinstance(surname, str) and isinstance(name, str) \
-                and isinstance(patronymic, str):
-            self.__surname = surname
-            self.__name = name
-            self.__patronymic = patronymic
-            self.__mobile_phone = mobile_phone
-        else:
+        if not (isinstance(mobile_phone, str) and isinstance(surname, str) and isinstance(name, str) \
+                and isinstance(patronymic, str)):
             raise TypeError
+        if match(r'\+380[0-9]{9}', mobile_phone):
+            raise ValueError
+        self.__surname = surname
+        self.__name = name
+        self.__patronymic = patronymic
+        self.__mobile_phone = mobile_phone
+
+    @property
+    def surname(self):
+        return self.__surname
+
+    @property
+    def name(self):
+        return self.__name
+
+    @property
+    def patronymic(self):
+        return self.__patronymic
+
+    @property
+    def mobile_phone(self):
+        return self.__mobile_phone
+
+    @surname.setter
+    def surname(self, surname):
+        if not isinstance(surname, str):
+            raise TypeError
+        self.__surname = surname
+
+    @name.setter
+    def name(self, name):
+        if not isinstance(name, str):
+            raise TypeError
+        self.__name = name
+
+    @patronymic.setter
+    def patronymic(self, patronymic):
+        if not isinstance(patronymic, str):
+            raise TypeError
+        self.__patronymic = patronymic
+
+    @mobile_phone.setter
+    def mobile_phone(self, mobile_phone):
+        if not isinstance(mobile_phone, str):
+            raise TypeError
+        if match(r'\+380[0-9]{9}', mobile_phone):
+            raise ValueError
+        self.__mobile_phone = mobile_phone
 
     def __str__(self):
         return f'Surname: {self.__surname}, name: {self.__name}, patronymic: {self.__patronymic}' \
@@ -36,14 +108,36 @@ class Customer:
 
 class Order:
     def __init__(self, customer, *products):
-        if isinstance(customer, Customer):
-            self.__customer = customer
-        else:
+        if not (isinstance(customer, Customer) and all(isinstance(x, Product) for x in products)):
             raise Exception
-        if all(isinstance(x, Product) for x in products):
-            self.__products = products
-        else:
-            raise Exception
+        self.__customer = customer
+        self.__products = list(products)
+
+    @property
+    def customer(self):
+        return self.__customer
+
+    @property
+    def products(self):
+        return self.__products
+
+    @customer.setter
+    def customer(self, customer):
+        if not isinstance(customer, Customer):
+            raise TypeError
+        self.__customer = customer
+
+    @products.setter
+    def products(self, products):
+        if not all(isinstance(x, Product) for x in products):
+            raise TypeError
+        self.__products = products
+
+    def add_product(self, product):
+        self.__products.append(product)
+
+    def remove_product(self, product):
+        self.__products.remove(product)
 
     def total_value(self):
         tv = 0
@@ -56,9 +150,14 @@ class Order:
 
 
 try:
-    customer = Customer('a', 's', 'd', 380661366613)
-    product = Product(1.25555, 'w', 'e')
-    order = Order(customer, product, Product(2, 'x', 'c'))
+    customer = Customer('a', 's', 'd', '+380661366613')
+    product1 = Product(1.255, 'w', 'e')
+    product2 = Product(28.5, 'w', 'e')
+
+    order = Order(customer, product1, Product(2, 'x', 'c'))
+
+    order.add_product(product2)
+    order.remove_product(product1)
 
     print(order)
     print('Total value:', order.total_value())
