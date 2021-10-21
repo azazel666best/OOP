@@ -58,8 +58,7 @@ class STUDENT:
 
 class GROUP:
     def __init__(self, *students):
-        if len(students) > 20:
-            raise ValueError
+        self.__count = 0
         if not all(isinstance(x, STUDENT) for x in students):
             raise TypeError
         self.__students = []
@@ -68,10 +67,11 @@ class GROUP:
 
     def add_student(self, new_student):
         if all((new_student.name, new_student.surname) != (student.name, student.surname) \
-               for student in self.__students):
+               for student in self.__students) and self.__count < 20:
             self.__students.append(new_student)
+            self.__count += 1
         else:
-            raise NameError
+            raise ValueError
 
     def dell_student(self, name, surname):
         if not (isinstance(name, str) and isinstance(surname, str)):
@@ -79,6 +79,7 @@ class GROUP:
         for student in self.__students:
             if (student.name, student.surname) == (name, surname):
                 self.__students.remove(student)
+                self.__count -= 1
 
     def top5(self):
         students_list = list(self.__students)
@@ -105,5 +106,3 @@ except TypeError:
     print('TypeError')
 except ValueError:
     print('ValueError')
-except NameError:
-    print('NameError')
