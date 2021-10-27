@@ -1,6 +1,6 @@
 class TreeNode:
     def __init__(self, key, val, left=None, right=None):
-        if not (isinstance(key, int) and isinstance(val, int) and (isinstance(left, TreeNode) or not left) \
+        if not (isinstance(key, int) and isinstance(val, int) and (isinstance(left, TreeNode) or not left)
                 and isinstance(right, TreeNode) or not right):
             raise TypeError
         self.key = key

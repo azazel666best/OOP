@@ -1,17 +1,11 @@
-from multiprocessing.dummy import Value
 from re import match
 
 
 class Product:
     def __init__(self, price, description, dimensions):
-        if not (isinstance(price, (int, float) and isinstance(description, str))):
-            raise TypeError
-        if price <= 0:
-            raise ValueError
-
-        self.__price = round(price, 2)
-        self.__description = description
-        self.__dimensions = dimensions
+        self.price = round(price, 2)
+        self.description = description
+        self.dimensions = dimensions
 
     @property
     def price(self):
@@ -49,15 +43,10 @@ class Product:
 
 class Customer:
     def __init__(self, surname, name, patronymic, mobile_phone):
-        if not (isinstance(mobile_phone, str) and isinstance(surname, str) and isinstance(name, str) \
-                and isinstance(patronymic, str)):
-            raise TypeError
-        if match(r'\+380[0-9]{9}', mobile_phone):
-            raise ValueError
-        self.__surname = surname
-        self.__name = name
-        self.__patronymic = patronymic
-        self.__mobile_phone = mobile_phone
+        self.surname = surname
+        self.name = name
+        self.patronymic = patronymic
+        self.mobile_phone = mobile_phone
 
     @property
     def surname(self):
@@ -97,7 +86,7 @@ class Customer:
     def mobile_phone(self, mobile_phone):
         if not isinstance(mobile_phone, str):
             raise TypeError
-        if match(r'\+380[0-9]{9}', mobile_phone):
+        if not match(r'\+380[0-9]{9}$', mobile_phone):
             raise ValueError
         self.__mobile_phone = mobile_phone
 
@@ -108,10 +97,8 @@ class Customer:
 
 class Order:
     def __init__(self, customer, *products):
-        if not (isinstance(customer, Customer) and all(isinstance(x, Product) for x in products)):
-            raise Exception
-        self.__customer = customer
-        self.__products = list(products)
+        self.customer = customer
+        self.products = list(products)
 
     @property
     def customer(self):
@@ -150,9 +137,9 @@ class Order:
 
 
 try:
-    customer = Customer('a', 's', 'd', '+380661366613')
+    customer = Customer('a', 's', 'd', '+380999999999')
     product1 = Product(1.255, 'w', 'e')
-    product2 = Product(28.5, 'w', 'e')
+    product2 = Product(28.5, '1', 'e')
 
     order = Order(customer, product1, Product(2, 'x', 'c'))
 

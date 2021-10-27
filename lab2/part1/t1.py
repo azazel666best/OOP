@@ -1,7 +1,7 @@
 class Rectangle:
     def __init__(self, length=1, width=1):
-        self.__length = length
-        self.__width = width
+        self.length = length
+        self.width = width
 
     @property
     def length(self):
@@ -18,7 +18,6 @@ class Rectangle:
         if 0.0 > length > 20.0:
             raise ValueError
         self.__length = length
-
 
     @width.setter
     def width(self, width):
@@ -46,5 +45,3 @@ except ValueError:
     print('ValueError')
 except TypeError:
     print('TypeError')
-
-

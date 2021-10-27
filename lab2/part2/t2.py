@@ -5,10 +5,10 @@ from re import findall
 class SPTF:
     def __init__(self, name):
         if not isfile(name):
-            raise Exception
+            raise NameError
         with open(name) as f:
             if not f.read().isascii():
-                raise Exception
+                raise TypeError
         self.__name = name
 
     def characters(self):
@@ -22,7 +22,7 @@ class SPTF:
 
     def sentences(self):
         with open(self.__name) as f:
-            return len(findall(r'[^!?.][\.!?]', f.read()))
+            return len(findall(r'[^!?.][.!?]', f.read()))
 
 
 try:
@@ -30,5 +30,7 @@ try:
     print(obj.characters())
     print(obj.words())
     print(obj.sentences())
-except Exception:
-    print('Error!')
+except TypeError:
+    print('TypeError!')
+except NameError:
+    print('NameError!')

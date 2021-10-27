@@ -1,12 +1,19 @@
-class STUDENT:
+class Student:
     def __init__(self, name, surname, record_book_number, *grades):
-        if not (isinstance(name, str) and isinstance(surname, str) and isinstance(record_book_number, int) and \
-                all(isinstance(x, int) for x in grades)):
+        self.name = name
+        self.surname = surname
+        self.record_book_number = record_book_number
+        self.grades = grades
+
+    def add_mark(self, mark):
+        if not isinstance(mark, int):
             raise TypeError
-        self.__name = name
-        self.__surname = surname
-        self.__record_book_number = record_book_number
-        self.__grades = grades
+        self.__grades.append(mark)
+
+    def dell_mark(self, mark):
+        if not isinstance(mark, int):
+            raise TypeError
+        self.__grades.remove(mark)
 
     def average_score(self):
         return sum(self.__grades) / len(self.__grades)
@@ -37,7 +44,7 @@ class STUDENT:
     def surname(self, surname):
         if not isinstance(surname, str):
             raise TypeError
-        self.__name = surname
+        self.__surname = surname
 
     @record_book_number.setter
     def record_book_number(self, record_book_number):
@@ -49,24 +56,24 @@ class STUDENT:
     def grades(self, grades):
         if not all(isinstance(x, int) for x in grades):
             raise TypeError
-        self.__name = grades
+        self.__grades = list(grades)
 
     def __str__(self):
         return f'{self.__name}, {self.__surname}, {self.__record_book_number}, {self.average_score()}; ' \
                + ', '.join(map(str, self.__grades))
 
 
-class GROUP:
+class Group:
     def __init__(self, *students):
         self.__count = 0
-        if not all(isinstance(x, STUDENT) for x in students):
+        if not all(isinstance(x, Student) for x in students):
             raise TypeError
         self.__students = []
         for student in students:
             self.add_student(student)
 
     def add_student(self, new_student):
-        if all((new_student.name, new_student.surname) != (student.name, student.surname) \
+        if all((new_student.name, new_student.surname) != (student.name, student.surname)
                for student in self.__students) and self.__count < 20:
             self.__students.append(new_student)
             self.__count += 1
@@ -82,22 +89,22 @@ class GROUP:
                 self.__count -= 1
 
     def top5(self):
-        students_list = list(self.__students)
-        students_list.sort(key=lambda x: x.average_score(), reverse=True)
-        return students_list[:5]
+        return sorted(self.__students, key=lambda x: x.average_score(), reverse=True)[:5]
 
     def __str__(self):
         return '\n'.join(map(str, self.__students))
 
 
 try:
-    obj1 = STUDENT('q', 'a', 123, 12, 13, 14, 15)
-    obj2 = STUDENT('w', 's', 123, 15, 13, 14, 15)
-    obj3 = STUDENT('e', 'd', 123, 12, 14, 14, 15)
-    obj4 = STUDENT('r', 'f', 123, 12, 13, 14, 15)
-    obj5 = STUDENT('t', 'g', 123, 12, 13, 17, 15)
-    obj6 = STUDENT('y', 'h', 123, 12, 12, 14, 15)
-    group = GROUP(obj1, obj2, obj3, obj4, obj5, obj6, STUDENT('a', 's', 456, 5, 4, 3))
+    obj1 = Student('q', 'a', 123, 12, 13, 14, 15)
+    obj2 = Student('w', 's', 123, 15, 13, 14, 15)
+    obj2.add_mark(25)
+    obj2.dell_mark(15)
+    obj3 = Student('e', 'd', 123, 12, 14, 14, 15)
+    obj4 = Student('r', 'f', 123, 12, 13, 14, 15)
+    obj5 = Student('t', 'g', 123, 12, 13, 17, 15)
+    obj6 = Student('y', 'h', 123, 12, 12, 14, 15)
+    group = Group(obj1, obj2, obj3, obj4, obj5, obj6, Student('a', 's', 456, 5, 4, 3))
     group.dell_student('q', 'a')
     lst = group.top5()
     for i in range(5):
