@@ -1,4 +1,5 @@
 from datetime import datetime
+import json
 
 
 class Event:
@@ -56,15 +57,15 @@ class Event:
         self.__date = date
 
     def __str__(self):
-        return f'{self.__name}, {self.__num_of_tickets}, {self.__base_price}, {self.__date}'
+        return f'Name: {self.__name}\nNum of tickets: {self.__num_of_tickets}\nBase price: {self.__base_price}\n' \
+               f'Date: {self.__date}'
 
 
 class Ticket:
-    def __init__(self, event, ticket_id, date, is_student=False):
+    def __init__(self, event, ticket_id, price):
         self.event = event
         self.ticket_id = ticket_id
-        self.is_student = is_student
-        self.date = date
+        self.price = price
 
     @property
     def event(self):
@@ -75,18 +76,20 @@ class Ticket:
         return self.__ticket_id
 
     @property
-    def is_student(self):
-        return self.__is_student
-
-    @property
-    def date(self):
-        return self.__date
+    def price(self):
+        return self.__price
 
     @event.setter
     def event(self, event):
         if not isinstance(event, Event):
             raise TypeError('event mast be Event')
         self.__event = event
+
+    @price.setter
+    def price(self, price):
+        if not isinstance(price, (int, float)):
+            raise TypeError('price mast be int or float')
+        self.__price = price
 
     @ticket_id.setter
     def ticket_id(self, ticket_id):
@@ -100,38 +103,57 @@ class Ticket:
         self.__event.num_of_tickets -= 1
         self.__event.tickets_id.append(ticket_id)
 
-    @is_student.setter
-    def is_student(self, is_student):
-        if not isinstance(is_student, bool):
-            raise TypeError('is student mast be bool')
-        self.__is_student = is_student
-
-    @date.setter
-    def date(self, date):
-        if not isinstance(date, datetime):
-            raise TypeError('date mast be datatime')
-        self.__date = date
-
-    def get_price(self):
-        if self.is_student:
-            return round(self.event.base_price * 0.5, 2)
-        elif (self.event.date - self.date).days >= 60:
-            return round(self.event.base_price * 0.6, 2)
-        elif (self.event.date - self.date).days < 10:
-            return round(self.event.base_price * 1.1, 2)
-        else:
-            return round(self.event.base_price, 2)
-
     def __str__(self):
-        return f'{self.ticket_id, self.is_student}'
+        return f'{self.event}\nTicket Id: {self.ticket_id}\nTicket price: {self.price}'
+
+
+class UsualTicket(Ticket):
+    def __init__(self, event, ticket_id):
+        super(UsualTicket, self).__init__(event, ticket_id, round(event.base_price, 2))
+
+
+class AdvanceTicket(Ticket):
+    def __init__(self, event, ticket_id):
+        with open('type_of_tickets') as file:
+            super(AdvanceTicket, self).__init__(event, ticket_id, round(event.base_price *
+                                                                        json.load(file)['AdvanceTicket'], 2))
+
+
+class StudentTicket(Ticket):
+    def __init__(self, event, ticket_id):
+        with open('type_of_tickets') as file:
+            super(StudentTicket, self).__init__(event, ticket_id, round(event.base_price *
+                                                                        json.load(file)['StudentTicket'], 2))
+
+
+class LateTicket(Ticket):
+    def __init__(self, event, ticket_id):
+        with open('type_of_tickets') as file:
+            super(LateTicket, self).__init__(event, ticket_id, round(event.base_price *
+                                                                        json.load(file)['LateTicket'], 2))
+
+
+def get_ticket(event, ticket_id, date, is_student=False):
+    if is_student:
+        return StudentTicket(event, ticket_id)
+    elif (event.date - date).days >= 60:
+        return AdvanceTicket(event, ticket_id)
+    elif (event.date - date).days < 10:
+        return LateTicket(event, ticket_id)
+    else:
+        return UsualTicket(event, ticket_id)
 
 
 try:
-    obj = Event('asd', 2, 12.5, datetime(2025, 7, 14, 12, 30))
-    ticket_1 = Ticket(obj, 152551, datetime(2025, 7, 12, 12, 30), False)
-    ticket_2 = Ticket(obj, 152552, datetime(2025, 7, 12, 12, 30), False)
-    print(obj.base_price)
-    print(ticket_1.get_price())
+    obj = Event('asd', 4, 12, datetime(2025, 7, 14, 12, 30))
+    ticket_us = get_ticket(obj, 152551, datetime(2025, 6, 13, 12, 30))
+    ticket_st = get_ticket(obj, 152552, datetime(2025, 7, 13, 12, 30), True)
+    ticket_ad = get_ticket(obj, 152553, datetime(2025, 7, 13, 12, 30))
+    ticket_lt = get_ticket(obj, 152554, datetime(2025, 5, 13, 12, 30))
+    print(ticket_us, end='\n\n')
+    print(ticket_st, end='\n\n')
+    print(ticket_ad, end='\n\n')
+    print(ticket_lt, end='\n\n')
 except TypeError as er:
     print('TypeError', er)
 except ValueError as er:
