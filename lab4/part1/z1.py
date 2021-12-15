@@ -17,7 +17,7 @@ class Rational:
         if not (isinstance(numerator, int) and isinstance(denominator, int)):
             raise TypeError("numerator and denominator mast be int")
         if denominator == 0:
-            raise ValueError("denominator mast be !=0")
+            raise ZeroDivisionError("denominator mast be !=0")
         k = gcd(numerator, denominator)
         self.numerator = numerator // k
         self.denominator = denominator // k
@@ -90,7 +90,7 @@ class Rational:
         else:
             return NotImplemented
 
-    @reduction
+    @reduction_dec
     def __iadd__(self, other):
         if isinstance(other, Rational):
             self.numerator = self.numerator * other.denominator + other.numerator * self.denominator
@@ -102,7 +102,7 @@ class Rational:
         else:
             return NotImplemented
 
-    @reduction
+    @reduction_dec
     def __isub__(self, other):
         if isinstance(other, Rational):
             self.numerator = self.numerator * other.denominator - other.numerator * self.denominator
@@ -114,7 +114,7 @@ class Rational:
         else:
             return NotImplemented
 
-    @reduction
+    @reduction_dec
     def __imul__(self, other):
         if isinstance(other, Rational):
             self.numerator *= other.numerator
@@ -126,7 +126,7 @@ class Rational:
         else:
             return NotImplemented
 
-    @reduction
+    @reduction_dec
     def __itruediv__(self, other):
         if isinstance(other, Rational):
             self.numerator *= other.denominator
